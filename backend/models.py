@@ -1,3 +1,4 @@
+#Go to this https://sqliteonline.com/ and upload your openmate.db to run SQL Queries 
 #This file is defiining the Database Tables
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
 from datetime import datetime
@@ -22,7 +23,7 @@ class User(Base):
 class Profile(Base):
     __tablename__ = "profiles"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
     bio = Column(Text)
     expertise = Column(String)
     public_slug = Column(String, unique=True)
