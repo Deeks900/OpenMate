@@ -1,6 +1,6 @@
 #This file will be defining schemas to do data type validation in Fast API Calls.Invalid and Missing inputs will be blocked before actually reaching Database. 
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 #When someone sends a data to create a new user then do these data type validations
@@ -24,3 +24,51 @@ class UserOut(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str    
+
+# --- BOOKING ---
+class BookingCreate(BaseModel):
+    slot_id: int   # instead of mentor_id/date/time
+
+class BookingResponse(BaseModel):
+    id: int
+    mentor_id: int
+    mentee_id: int
+    date: str
+    time: str
+    booking_time: datetime
+
+    class Config:
+        orm_mode = True
+
+
+# --- AVAILABILITY ---
+class AvailabilityCreate(BaseModel):
+    date: str
+    start_time: str
+    end_time: str
+    slot_duration: Optional[int] = 30
+
+class AvailabilityResponse(BaseModel):
+    id: int
+    mentor_id: int
+    date: str
+    start_time: str
+    end_time: str
+    slot_duration: int
+
+    class Config:
+        orm_mode = True  
+
+class TimeSlotResponse(BaseModel):
+    id: int
+    date: str
+    start_time: str
+    end_time: str
+    is_booked: bool
+
+    class Config:
+        orm_mode = True
