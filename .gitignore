@@ -1,3 +1,4 @@
 .env
 __pycache__/
 openmate.db
+.DS_store
