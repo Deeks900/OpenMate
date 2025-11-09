@@ -1,0 +1,234 @@
+/* FULL SCREEN GRADIENT ANIMATED BACKGROUND */
+.animated-bg {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at 20% 20%, #0a2540, #000000 70%);
+  overflow: hidden;
+  position: relative;
+}
+
+/* FLOATING LIGHT CLOUDS */
+.animated-bg::before, .animated-bg::after {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.45), transparent 70%);
+  animation: float 8s infinite ease-in-out alternate;
+  filter: blur(120px);
+}
+.animated-bg::after {
+  animation-delay: 4s;
+  left: 60%;
+  top: 40%;
+}
+@keyframes float {
+  0% { transform: translate(-20%, -10%) scale(1); }
+  100% { transform: translate(20%, 10%) scale(1.4); }
+}
+
+/* HALO GLOW BEHIND CARD */
+.halo {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,170,255,0.35), transparent 70%);
+  filter: blur(90px);
+  animation: haloRotate 18s infinite linear;
+  pointer-events: none;
+}
+@keyframes haloRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.25); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* GLASS CARD */
+.glass-card {
+  width: 450px;
+  padding: 40px 45px;
+  border-radius: 18px;
+  text-align: center;
+  color: #e9f1ff;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.55);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.65);
+}
+
+/* SHIMMER BORDER */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(120deg, #00d4ff, #338bff, #7d5dff, #00d4ff);
+  background-size: 300% 300%;
+  animation: shimmer 6s infinite linear;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 150% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* APP LABEL */
+.app-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  background: linear-gradient(135deg, #4d9fff, #7b55ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-bottom: 22px;
+}
+
+/* INPUTS */
+.full-width {
+  width: 100%;
+}
+
+/* BUTTON */
+.glass-btn {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00d4ff, #009cff);
+  color: #001626 !important;
+  font-weight: 600;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(0, 200, 255, 0.55);
+}
+.glass-btn:hover {
+  box-shadow: 0 0 22px rgba(0, 200, 255, 1);
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* REGISTER LINK */
+.link a {
+  color: #8ee8ff;
+  font-weight: 500;
+  position: relative;  /* ensure above any background */
+  z-index: 2;
+}
+
+/* PARTICLES */
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.particles span {
+  position: absolute;
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: rgba(0, 200, 255, 0.45);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 200, 255, 0.8);
+  animation: floatParticle 12s infinite ease-in-out;
+}
+.particles span:nth-child(1) { top: 10%; left: 20%; animation-duration: 14s; }
+.particles span:nth-child(2) { top: 50%; left: 70%; animation-duration: 18s; }
+.particles span:nth-child(3) { top: 30%; left: 40%; animation-duration: 16s; }
+.particles span:nth-child(4) { top: 80%; left: 25%; animation-duration: 20s; }
+.particles span:nth-child(5) { top: 65%; left: 85%; animation-duration: 22s; }
+.particles span:nth-child(6) { top: 15%; left: 75%; animation-duration: 19s; }
+.particles span:nth-child(7) { top: 45%; left: 15%; animation-duration: 21s; }
+.particles span:nth-child(8) { top: 90%; left: 60%; animation-duration: 24s; }
+.particles span:nth-child(9) { top: 70%; left: 45%; animation-duration: 26s; }
+.particles span:nth-child(10){ top: 25%; left: 90%; animation-duration: 28s; }
+
+@keyframes floatParticle {
+  0% { transform: translateY(0px) scale(1); opacity: .8; }
+  50% { transform: translateY(-40px) scale(1.4); opacity: 1; }
+  100% { transform: translateY(0px) scale(1); opacity: .8; }
+}
+
+:host ::ng-deep .mdc-text-field__input {
+  font-family: "Poppins", sans-serif !important;
+  font-size: 15px !important;
+  color: #e9f7ff !important;
+}
+
+:host ::ng-deep .mdc-floating-label {
+  font-family: "Poppins", sans-serif !important;
+  color: #cfe9ff !important;
+  font-weight: 400 !important;
+}
+
+:host ::ng-deep .mdc-text-field--focused .mdc-floating-label {
+  color: #7eeaff !important;
+  font-weight: 500 !important;
+}
+
+:host ::ng-deep .mdc-notched-outline__leading,
+:host ::ng-deep .mdc-notched-outline__notch,
+:host ::ng-deep .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+:host ::ng-deep .mdc-text-field--focused .mdc-notched-outline__leading,
+:host ::ng-deep .mdc-text-field--focused .mdc-notched-outline__notch,
+:host ::ng-deep .mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #57d8ff !important;
+  filter: drop-shadow(0 0 12px rgba(0, 200, 255, 0.55));
+  transition: 0.35s ease;
+}
+
+:host ::ng-deep input::placeholder {
+  color: #a8ddff !important;
+  opacity: 0.8 !important;
+}
+
+:host ::ng-deep .mdc-text-field:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline {
+  box-shadow: 0 0 18px rgba(0, 210, 255, 0.45) !important;
+  transition: box-shadow 0.35s ease !important;
+}
+
+.glass-btn {
+  position: relative;
+  overflow: hidden;
+  transition: 0.35s ease;
+}
+
+.glass-btn:hover {
+  box-shadow: 0 0 22px rgba(0, 210, 255, 0.75);
+  transform: translateY(-2px);
+}
+
+/* Ripple Glow */
+.glass-btn::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(135, 250, 255, 0.4), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.glass-btn:active::after {
+  opacity: 1;
+}

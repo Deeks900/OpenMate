@@ -22,7 +22,10 @@ def hash_password(password: str):
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password, hashed_password)
+    plain_password = plain_password.strip()
+    hashed_password = hashed_password.strip()
+    check = pwd_context.verify(plain_password, hashed_password)
+    return check
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()

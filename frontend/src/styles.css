@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global App Font Setup */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 0.3px;
+}
+
+html, body {
+  -webkit-font-smoothing: antialiased;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;  /* remove horizontal scroll */
+  overflow-y: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+/* Headings use Montserrat for premium branding */
+h1, h2, h3, .app-title {
+  font-family: "Montserrat", sans-serif;
+  letter-spacing: 0.8px;
+}
+
+/* Apply Poppins to everything including Material */
+html, body, * {
+  font-family: "Poppins", sans-serif !important;
+}
+
+/* Glassy dropdown panel */
+.mat-mdc-select-panel {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 0 25px rgba(0, 200, 255, 0.45) !important;
+  padding-left: 12px;
+}
+
+/* Options text */
+.mat-mdc-option {
+  color: #d9f6ff !important;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Option hover */
+.mat-mdc-option:hover {
+  background: rgba(0, 210, 255, 0.25) !important;
+  color: #001626 !important;
+}
+
+/* Selected option */
+.mat-mdc-option.mat-mdc-option-selected {
+  background: rgba(0, 210, 255, 0.35) !important;
+  color: #001626 !important;
+}
+
+.mat-mdc-form-field .mat-mdc-input-element {
+  padding-left: 12px;
+}
+
