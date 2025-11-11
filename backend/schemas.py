@@ -27,7 +27,25 @@ class LoginRequest(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str    
+    token_type: str  
+    role: str  
+
+class ProfileUpdate(BaseModel):
+    bio: str
+    expertise: str
+    photo_url: Optional[str] = None
+
+
+class ProfileResponse(BaseModel):
+    id: int
+    user_id: int
+    bio: str
+    expertise: str
+    public_slug: str
+    photo_url: Optional[str]
+
+    class Config:
+        orm_mode = True
 
 # --- BOOKING ---
 class BookingCreate(BaseModel):

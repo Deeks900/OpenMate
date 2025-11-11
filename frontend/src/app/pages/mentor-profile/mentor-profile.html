@@ -1,0 +1,43 @@
+<div class="animated-bg">
+  <div class="particles">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="halo"></div>
+
+  <div class="glass-card">
+    <h2 class="app-title">Mentor Profile</h2>
+    <p class="subtitle">Tell mentees about your expertise</p>
+
+    <form [formGroup]="profileForm">
+      
+      <textarea formControlName="bio" placeholder="Your bio"
+      class="full-width input"></textarea>
+
+      <input formControlName="expertise" placeholder="Your expertise (e.g., Data Engineering)"
+      class="full-width input"/>
+
+      <input formControlName="public_slug" placeholder="Public profile link (e.g., deeksha-tech)"
+      class="full-width input"/>
+
+      <div class="photo-section">
+        <div class="photo-circle" (click)="fileInput.click()">
+        <img *ngIf="previewUrl; else defaultPhoto" [src]="previewUrl" class="photo-preview" />
+
+            <ng-template #defaultPhoto>
+                <div class="upload-text">Upload Photo</div>
+            </ng-template>
+        </div>
+
+        <input type="file" #fileInput accept="image/*" hidden (change)="onPhotoSelect($event)">
+    </div>
+
+      <button class="glass-btn full-width" (click)="saveProfile()" [disabled]="saving">
+        {{ saving ? "Saving..." : "Save Profile" }}
+      </button>
+
+      <p *ngIf="message" style="margin-top:10px;">{{ message }}</p>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="animated-bg">
+
+  <!-- FLOATING PARTICLES -->
+  <div class="particles">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- HALO GLOW -->
+  <div class="halo"></div>
+
+  <mat-card class="glass-card">
+
+    <h2 class="app-title">OpenMate</h2>
+    <p class="subtitle">Welcome Back</p>
+
+    <form (ngSubmit)="login()" autocomplete="off">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="email" name="email" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" [(ngModel)]="password" name="password" required>
+      </mat-form-field>
+
+      <button mat-raised-button class="glass-btn full-width">Login</button>
+    </form>
+
+    <p class="link">No account? <a routerLink="/register">Register</a></p>
+
+  </mat-card>
+</div>

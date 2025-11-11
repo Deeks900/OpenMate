@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
-from routers import users, mentors, bookings
+from routers import users, mentors, bookings, profile
 
 app = FastAPI(title="OpenMate Backend")
 
@@ -11,7 +11,8 @@ Base.metadata.create_all(bind=engine)
 # Allow frontend requests (Angular)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], 
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -20,6 +21,7 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(mentors.router)
 app.include_router(bookings.router)
+app.include_router(profile.router)
 
 @app.get("/")
 def home():

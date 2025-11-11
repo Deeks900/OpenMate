@@ -1,0 +1,48 @@
+<div class="animated-bg">
+
+  <!-- PARTICLES -->
+  <div class="particles">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- HALO GLOW -->
+  <div class="halo"></div>
+
+  <mat-card class="glass-card">
+    <h2 class="app-title">OpenMate</h2>
+    <p class="subtitle">Create Your Account</p>
+
+    <form (ngSubmit)="register()" autocomplete="off">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full Name</mat-label>
+        <input matInput [(ngModel)]="name" name="name" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="email" name="email" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" [(ngModel)]="password" name="password" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width role-field">
+        <mat-label>Role</mat-label>
+            <mat-select [(ngModel)]="role" name="role" required class="select-field">
+                <mat-option value="mentor">Mentor</mat-option>
+                 <mat-option value="mentee">Mentee</mat-option>
+            </mat-select>
+      </mat-form-field>
+
+
+      <button mat-raised-button class="glass-btn full-width">Sign Up</button>
+    </form>
+
+    <p class="link">Already have an account? <a routerLink="/login">Login</a></p>
+
+  </mat-card>
+</div>
