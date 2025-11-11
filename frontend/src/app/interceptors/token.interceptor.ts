@@ -1,26 +1,37 @@
 //@Injectable() marks a class as available for injection by Angular’s DI system (so other classes can receive it in their constructors).
 import { Injectable } from '@angular/core';
 import {
-  HttpInterceptor, HttpRequest, HttpHandler, HttpEvent
+  HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService) {}
 
-  //This is the required method for HttpInterceptor. It is called for every outgoing HTTP request.
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.auth.getToken();
-    if (!token) return next.handle(req);
 
-    //HttpRequest objects are immutable. Always use req.clone({...}) to modify headers, body, params, etc.
-    const cloned = req.clone({
+    const cloned = token ? req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
-    });
+    }) : req;
 
-    return next.handle(cloned);
+    return next.handle(cloned).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          return this.auth.refreshToken().pipe(
+            switchMap((newToken: string) => {
+              const retryReq = req.clone({
+                setHeaders: { Authorization: `Bearer ${newToken}` }
+              });
+              return next.handle(retryReq);
+            })
+          );
+        }
+        return throwError(() => err);
+      })
+    );
   }
 }
 

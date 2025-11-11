@@ -6,7 +6,7 @@ from config import settings
 #fastapi.security is a helper module provided by FastAPI that makes it super easy to implement authentication and authorization.
 from fastapi.security import OAuth2PasswordBearer
 #Jose is a Python Library to deal with JWT Tokens
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 #Passlib is a password hashing library for Python 2 & 3
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
@@ -40,10 +40,18 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         detail="Invalid authentication credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    print("I came in get_current_user")
     try:
+        print("token is {}".format(token))
+        print("RAW TOKEN BYTES:", repr(token))
+        print("SECRET KEY USED:", settings.SECRET_KEY)
+        print("ALGORITHM:", settings.ALGORITHM)
+        #options={"verify_exp": False}
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        print("payload is {}".format(payload))
         #Get the user Id from the Payload of the JWT Token
         user_id: str = payload.get("sub")
+        print(f"user is {user_id}")
         if user_id is None:
             raise credentials_exception
     except ExpiredSignatureError:
@@ -52,6 +60,10 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
 
     user = db.query(models.User).filter(models.User.id == user_id).first()
+    #user = db.query(models.User).filter(models.User.email == user_email).first()
+
     if user is None:
         raise credentials_exception
     return user
+
+    

@@ -29,14 +29,18 @@ export class Login {
   constructor(private auth: AuthService, private router: Router) {}
 
   login() {
-    const payload = { email: this.email, password: this.password };
+  const payload = { email: this.email, password: this.password };
 
-    this.auth.login(payload).subscribe({
-      next: (res: any) => {
-        localStorage.setItem('token', res.access_token);
+  this.auth.login(payload).subscribe({
+    next: (res: any) => {
+      const role = res.role;
+      if (role === 'mentor') {
+        this.router.navigate(['/mentor/profile-edit']);
+      } else {
         this.router.navigate(['/dashboard']);
-      },
-      error: err => alert(err.error.detail || "Login failed")
-    });
-  }
+      }
+    },
+    error: err => alert(err.error.detail || "Login failed")
+  });
+}
 }
