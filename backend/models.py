@@ -13,6 +13,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True)
     password_hash = Column(String, nullable=False)
+    refresh_token = Column(String, nullable=True)
     role = Column(String, default="mentee")  # mentee or mentor
     created_at = Column(DateTime, default=datetime.utcnow)
 

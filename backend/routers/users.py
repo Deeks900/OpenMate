@@ -58,8 +58,13 @@ def login(data: schemas.LoginRequest, response: Response, db: Session = Depends(
         "sub": str(user.id),       
         "role": user.role          
     })
+    
     #Refresh token will be long lived 
     refresh_token = create_access_token({ "sub": str(user.id) }, expires_delta=timedelta(days=7))
+
+    #Store refresh token in DB
+    user.refresh_token = refresh_token
+    db.commit()
    
     # Set refresh token as HttpOnly cookie (can't be read by JS).But browser will be attaching it with every http request
     response.set_cookie(
@@ -76,7 +81,7 @@ def login(data: schemas.LoginRequest, response: Response, db: Session = Depends(
 
 #Refresh End Point
 @router.post("/refresh", response_model=schemas.TokenResponse)
-def refresh_token(refresh_token: str = Cookie(None), db: Session = Depends(get_db)):
+def refresh_token(response: Response, refresh_token: str = Cookie(None), db: Session = Depends(get_db)):
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
 
@@ -88,9 +93,27 @@ def refresh_token(refresh_token: str = Cookie(None), db: Session = Depends(get_d
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
+    #Step 1: Verify that user exists and token matches the one in DB
     user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    if not user or user.refresh_token != refresh_token:
+        raise HTTPException(status_code=401, detail="Invalid or revoked refresh token")
 
+    #Step 2: Rotate (issue new refresh token)
+    new_refresh_token = create_access_token({"sub": str(user.id)})
+    user.refresh_token = new_refresh_token
+    db.commit()
+
+    #Step 3: Update cookie in response
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=False,   # change to True in production (HTTPS only)
+        samesite="Lax",
+        max_age=7 * 24 * 60 * 60  # 7 days
+    )
+
+    #step 4: Issue a new access token
     access_token = create_access_token({"sub": str(user.id), "role": user.role})
-    return {"access_token": access_token, "token_type": "bearer"}  
+
+    return {"access_token": access_token, "token_type": "bearer"}
