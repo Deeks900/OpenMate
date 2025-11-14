@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../services/profile.service';
 import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mentor-profile',
@@ -18,7 +19,7 @@ export class MentorProfile {
   message: string = "";
   saving: boolean = false;
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService) {
+  constructor(private fb: FormBuilder, private profileService: ProfileService, private router: Router) {
     this.profileForm = this.fb.group({
       bio: ['', Validators.required],
       expertise: ['', Validators.required],
@@ -74,6 +75,7 @@ export class MentorProfile {
       }).subscribe(() => {
         this.message = "Profile saved successfully!";
         this.saving = false;
+        this.router.navigate(['/dashboard']);
       });
 
     } catch (error) {

@@ -31,24 +31,24 @@ export class AuthService {
 
   // --- SAVE TOKEN ---
   saveToken(token: string) {
-    localStorage.setItem('token', token);
+    localStorage.setItem('access_token', token);
   }
 
   // --- GET TOKEN ---
   getToken(): string | null {
-    var token = localStorage.getItem('token');
+    var token = localStorage.getItem('access_token');
     console.log(token)
     return token
   }
     
   // --- LOGOUT ---
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
   }
 
   // --- CHECK LOGIN STATUS ---
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('access_token');
   }
 
   refreshToken() {

@@ -40,15 +40,10 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         detail="Invalid authentication credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    print("I came in get_current_user")
     try:
-        print("token is {}".format(token))
-        print("RAW TOKEN BYTES:", repr(token))
-        print("SECRET KEY USED:", settings.SECRET_KEY)
-        print("ALGORITHM:", settings.ALGORITHM)
         #options={"verify_exp": False}
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        print("payload is {}".format(payload))
+        print("payload here is {}".format(payload))
         #Get the user Id from the Payload of the JWT Token
         user_id: str = payload.get("sub")
         print(f"user is {user_id}")

@@ -54,7 +54,7 @@ export class Register {
             console.log(role)
 
             if (role === 'mentor') {
-              this.router.navigate(['/mentor/profile-edit']); // route to profile update page
+              this.router.navigate(['/mentor/profile']); // route to profile update page
             } else {
               this.router.navigate(['/dashboard']); // mentee dashboard
             }
