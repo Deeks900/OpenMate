@@ -5,10 +5,11 @@ from schemas import AvailabilityCreate, AvailabilityResponse, TimeSlotResponse
 from models import Availability, TimeSlot
 from auth import get_current_user
 from datetime import datetime, timedelta
+from sqlalchemy import and_
 
 router = APIRouter(prefix="/mentors", tags=["Mentors"])
 
-
+#This function will be generating slots within the availability time depending upon slot duration submitted
 def generate_slots(start, end, duration):
     slots = []
     current = start
@@ -22,14 +23,32 @@ def generate_slots(start, end, duration):
 
 @router.post("/availability", response_model=AvailabilityResponse)
 def add_availability(data: AvailabilityCreate, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    # Convert start/end to datetime for easy comparison
+    new_start_dt = datetime.strptime(f"{data.date} {data.start_time}", "%Y-%m-%d %H:%M")
+    new_end_dt = datetime.strptime(f"{data.date} {data.end_time}", "%Y-%m-%d %H:%M")
+
+    # Check for any overlapping availability for the same mentor on the same date
+    overlapping = db.query(Availability).filter(
+        Availability.mentor_id == user.id,
+        Availability.date == data.date,
+        # Overlap condition: new_start < existing_end AND new_end > existing_start
+        and_(
+            new_start_dt.time() < Availability.end_time,
+            new_end_dt.time() > Availability.start_time
+        )
+    ).first()
+
+    if overlapping:
+        raise HTTPException(status_code=400, detail="This time range overlaps with existing availability")
+    
     slot = Availability(
         mentor_id=user.id,
         date=data.date,
         start_time=data.start_time,
         end_time=data.end_time,
-        slot_duration=data.slot_duration
+        slot_duration=data.slot_duration or 30
     )
-
+    
     db.add(slot)
     db.flush()   # <-- temporary save, but not final commit
     db.refresh(slot)
@@ -53,22 +72,27 @@ def add_availability(data: AvailabilityCreate, db: Session = Depends(get_db), us
 
     return slot
 
-#Getting all available dates 
-@router.get("/availability/dates/{mentor_id}", response_model=list[str])
-def get_available_dates(mentor_id: int, db: Session = Depends(get_db)):
-    dates = db.query(TimeSlot.date)\
-              .filter(TimeSlot.mentor_id == mentor_id, TimeSlot.is_booked == False)\
-              .distinct()\
-              .all()
-    return [d[0] for d in dates]
+@router.get("/my-availability", response_model=list[AvailabilityResponse])
+def get_my_availability(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    """
+    Fetch all availabilities of the logged-in mentor.
+    """
+    if user.role != "mentor":
+        raise HTTPException(status_code=403, detail="Only mentors can view this")
 
-#Getting all slots for a specific date 
-@router.get("/availability/{mentor_id}/{date}", response_model=list[TimeSlotResponse])
-def get_free_slots(mentor_id: int, date: str, db: Session = Depends(get_db)):
+    availabilities = db.query(Availability).filter(Availability.mentor_id == user.id).all()
+    return availabilities
+
+@router.get("/availability/{id}/slots", response_model=list[TimeSlotResponse])
+def get_slots_by_availability_id(id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    if user.role != "mentor":
+        raise HTTPException(status_code=403, detail="Only mentors can view this")
+
     slots = db.query(TimeSlot).filter(
-        TimeSlot.mentor_id == mentor_id,
-        TimeSlot.date == date,
-        TimeSlot.is_booked == False
+        TimeSlot.availability_id == id,
+        TimeSlot.mentor_id == user.id
     ).all()
-
+    
+    print("i am giving slots")
     return slots
+

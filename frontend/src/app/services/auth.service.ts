@@ -21,7 +21,9 @@ export class AuthService {
 
   // --- LOGIN ---
   login(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, data).pipe(
+    return this.http.post(`${this.apiUrl}/auth/login`, data, {
+      withCredentials: true
+    }).pipe(
     tap((res: any) => {
       localStorage.setItem('access_token', res.access_token);
       localStorage.setItem('user_role', res.role);
@@ -52,7 +54,7 @@ export class AuthService {
   }
 
   refreshToken() {
-  return this.http.post<any>('/auth/refresh', {}, { withCredentials: true })
+  return this.http.post<any>(`${this.apiUrl}/auth/refresh`, {}, { withCredentials: true })
     .pipe(
       tap(res => this.saveToken(res.access_token)),
       map(res => res.access_token)

@@ -282,3 +282,22 @@
     padding-left: 12px;
 }
 
+/* Selected value inside the select (trigger text) */
+:host ::ng-deep .mat-mdc-select-value-text {
+  color: #d9f6ff !important;
+  font-family: "Poppins", sans-serif !important;
+}
+
+/* Selected item text inside dropdown */
+:host ::ng-deep .mat-mdc-option.mat-mdc-option-active {
+  color: #d9f6ff !important;
+}
+
+/* Placeholder / unselected label */
+:host ::ng-deep .mat-mdc-select-placeholder {
+  color: #a8ddff !important;
+}
+
+:host ::ng-deep .mdc-text-field__input {
+  padding-left: 4px !important;
+}

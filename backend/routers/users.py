@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie,
 from sqlalchemy.orm import Session
 import models, schemas
 from database import get_db
-from auth import hash_password, verify_password, create_access_token
+from auth import hash_password, verify_password, create_access_token, create_refresh_token
 from datetime import timedelta
 
 
@@ -35,6 +35,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
         new_profile = models.Profile(
             user_id=db_user.id,
+            user_name=db_user.name,
             bio="",
             expertise="",
             public_slug=slug,
@@ -60,7 +61,7 @@ def login(data: schemas.LoginRequest, response: Response, db: Session = Depends(
     })
     
     #Refresh token will be long lived 
-    refresh_token = create_access_token({ "sub": str(user.id) }, expires_delta=timedelta(days=7))
+    refresh_token = create_refresh_token({"sub": str(user.id)})
 
     #Store refresh token in DB
     user.refresh_token = refresh_token
@@ -71,10 +72,11 @@ def login(data: schemas.LoginRequest, response: Response, db: Session = Depends(
         key="refresh_token",
         value=refresh_token,
         httponly=True, #So that JS can't read it
-        secure=False, #In production I will be keeping it as true so that it will be sent over https only   
+        secure=True, #In production I will be keeping it as true so that it will be sent over https only   
         #it will NOT be sent in most cross-site requests, such as when another website tries to make a request to your server on behalf of the user.This helps prevent CSRF attacks (Cross-Site Request Forgery).  
-        samesite="Lax",
-        max_age=7*24*60*60 #7 days is the life 
+        samesite="none",
+        max_age=7*24*60*60, #7 days is the life 
+        path="/"
     )
 
     return {"access_token": access_token, "token_type": "bearer", "role": user.role}    
@@ -82,6 +84,7 @@ def login(data: schemas.LoginRequest, response: Response, db: Session = Depends(
 #Refresh End Point
 @router.post("/refresh", response_model=schemas.TokenResponse)
 def refresh_token(response: Response, refresh_token: str = Cookie(None), db: Session = Depends(get_db)):
+    print("I came in refresh token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
 
@@ -99,7 +102,7 @@ def refresh_token(response: Response, refresh_token: str = Cookie(None), db: Ses
         raise HTTPException(status_code=401, detail="Invalid or revoked refresh token")
 
     #Step 2: Rotate (issue new refresh token)
-    new_refresh_token = create_access_token({"sub": str(user.id)})
+    new_refresh_token = create_refresh_token({"sub": str(user.id)})
     user.refresh_token = new_refresh_token
     db.commit()
 

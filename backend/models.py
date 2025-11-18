@@ -33,6 +33,7 @@ class Profile(Base):
     __tablename__ = "profiles"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    user_name = Column(String)
     bio = Column(Text)
     expertise = Column(String)
     public_slug = Column(String, unique=True)
