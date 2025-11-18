@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -8,13 +9,13 @@ export class ProfileService {
 
   constructor(private http: HttpClient) {}
 
-  getMyProfile() {
-    return this.http.get(`${this.api}/me`);
+  getMyProfile():Observable<any> {
+    return this.http.get<any>(`${this.api}/me`);
   }
 
-  updateProfile(data: any) {
+  updateProfile(data: any):Observable<any>{
     console.log("I came on update Profile function.")
     console.log(data)
-    return this.http.put(`${this.api}/update`, data);
+    return this.http.put<any>(`${this.api}/update`, data);
   }
 }

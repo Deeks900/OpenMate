@@ -1,1 +1,173 @@
-<p>dashboard works!</p>
+<div class="animated-bg">
+
+  <!-- FLOATING PARTICLES -->
+  <div class="particles">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- ROTATING HALO -->
+  <div class="halo"></div>
+
+  <!-- DASHBOARD CONTAINER -->
+  <div class="dashboard-container">
+
+    <!-- ===== LEFT SIDE PROFILE CARD ===== -->
+    <div class="glass-card profile-card">
+
+        <!-- <div *ngIf="profile?.photo_url" class="default-avatar">
+        [src]="profile.photo_url"
+        class="mentor-photo" />
+        </div>
+        
+        <div *ngIf="!profile?.photo_url" class="default-avatar">
+        <img class="avatar-img" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" />
+        </div>  -->
+
+        <div class="avatar-wrapper">
+
+    <!-- Photo if available -->
+    <img
+      *ngIf="profile?.photo_url"
+      [src]="profile.photo_url"
+      class="avatar-img"
+      alt="Mentor photo"
+    />
+
+    <!-- Default avatar if no photo -->
+    <img
+      *ngIf="!profile?.photo_url"
+      src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png"
+      class="avatar-img"
+      alt="Default avatar"
+    />
+
+  </div>
+
+      <h2 class="mentor-name">{{ profile?.name }}</h2>
+      <div class="mentor-expertise">{{ profile?.expertise || 'Your Expertise' }}</div>
+      <p class="mentor-bio">{{ profile?.bio || 'Your Bio' }}</p>
+
+
+      <button mat-raised-button color="primary" class="edit-btn" (click)="goToEditProfile()">
+        Edit Profile
+      </button>
+
+      <button mat-button class="logout-btn" (click)="signOut()">
+        Logout
+      </button>
+    </div>
+
+    <!-- ===== RIGHT CONTENT SECTION ===== -->
+    <div>
+
+      <!--ADD AVAILABILITY -->
+      <div class="glass-card big-card">
+        <div class="card-title">Add Availability</div>
+
+        <form [formGroup]="availabilityForm" (ngSubmit)="addAvailability()">
+
+          <div class="form-grid">
+
+            <!-- DATE -->
+            <mat-form-field appearance="outline">
+              <mat-label>Date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="date" />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <!-- START TIME -->
+            <div class="form-group">
+              <label class="label">Start Time</label>
+              <input
+                type="time"
+                formControlName="start_time"
+                class="custom-input"
+              />
+            </div>
+
+            <!-- END TIME -->
+            <div class="form-group">
+              <label class="label">End Time</label>
+              <input
+                type="time"
+                formControlName="end_time"
+                class="custom-input"
+              />
+            </div>
+
+
+            <!-- SLOT DURATION -->
+            <mat-form-field appearance="outline">
+              <mat-label>Slot Duration (mins)</mat-label>
+              <input matInput type="number" formControlName="slot_duration" />
+            </mat-form-field>
+
+          </div>
+
+          <button mat-raised-button type="submit" color="accent" style="margin-top: 12px; width: 100%;" [disabled]="saving || availabilityForm.invalid">
+            {{ saving ? 'Saving...' : 'Save Availability' }}
+          </button>
+
+        </form>
+
+        <div class="message">{{ message }}</div>
+      </div>
+
+     <!-- MY AVAILABILITY LIST -->
+<div class="glass-card big-card">
+  <div class="card-title">My Availability</div>
+
+  <!-- DATE FILTER -->
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Select Date</mat-label>
+    <input matInput [matDatepicker]="filterPicker" [(ngModel)]="selectedDate" (dateChange)="filterAvailability()"/>
+    <mat-datepicker-toggle matSuffix [for]="filterPicker"></mat-datepicker-toggle>
+    <mat-datepicker #filterPicker></mat-datepicker>
+  </mat-form-field>
+
+  <!-- LIST OF AVAILABILITIES FOR SELECTED DATE -->
+  <div *ngFor="let avail of filteredAvailability" class="availability-item glass-card">
+  <!-- CARD HEADER -->
+  <div class="availability-header">
+    <div class="availability-info">
+      <strong>{{ avail.date }}</strong>
+      <div class="avail-time">{{ avail.start_time }} → {{ avail.end_time }}</div>
+       </div>
+      
+       <button class="view-btn" mat-raised-button color="primary" (click)="toggleSlots(avail)">
+      {{ displayedSlotsForAvailabilityId === avail.id ? 'Hide Slots' : 'View Slots' }}
+    </button>
+  </div>
+
+  <!-- HORIZONTAL SLOTS PANEL -->
+  <div *ngIf="displayedSlotsForAvailabilityId === avail.id" class="slot-row">
+    <div *ngFor="let slot of slotsForShownAvailability" class="slot-pill">
+      {{ slot.start_time }} → {{ slot.end_time }}
+
+      <button mat-icon-button class="delete-btn" (click)="deleteSlot(slot.id)">
+  <mat-icon>delete</mat-icon>
+ 
+</button>
+    </div>
+  </div>
+
+</div>
+
+
+  <div class="empty-text" *ngIf="filteredAvailability.length === 0">
+    No availability for selected date.
+  </div>
+</div>
+
+
+      <!--BOOKINGS -->
+      <div class="glass-card big-card">
+        <div class="card-title">Bookings</div>
+
+        <div *ngFor="let b of bookings" class="booking-item">
+          <div>
+            <div><strong>{{ b.student_name }}</strong></div>
+            <div class="booking-time">{{ b.slot }}</div>
+          </div>

@@ -59,4 +59,6 @@ html, body, * {
 .mat-mdc-form-field .mat-mdc-input-element {
   padding-left: 12px;
 }
-
+.material-icons {
+  font-family: "Material Icons" !important;
+}

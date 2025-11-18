@@ -38,6 +38,7 @@ class ProfileUpdate(BaseModel):
 
 class ProfileResponse(BaseModel):
     id: int
+    user_name: str
     user_id: int
     bio: str
     expertise: str

@@ -43,3 +43,11 @@ def upload_photo(file: UploadFile = File(...), db: Session = Depends(get_db), us
     db.refresh(profile)
 
     return {"photo_url": profile.photo_url}
+
+#Return the profile of the current user 
+@router.get("/me", response_model=ProfileResponse)
+def get_my_profile(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    profile = db.query(Profile).filter(Profile.user_id == user.id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
