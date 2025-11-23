@@ -43,10 +43,11 @@ export class AuthService {
     return token
   }
     
-  // --- LOGOUT ---
   logout() {
-    localStorage.removeItem('access_token');
-  }
+  return this.http.post(`${this.apiUrl}/auth/logout`, {}, {
+    withCredentials: true
+  });
+}
 
   // --- CHECK LOGIN STATUS ---
   isLoggedIn(): boolean {

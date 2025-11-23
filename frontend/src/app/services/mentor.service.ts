@@ -30,7 +30,9 @@ export class MentorService {
   }
 
   deleteSlot(slotId: number) {
-  return this.http.delete(`/mentors/slots/${slotId}`);
+  return this.http.delete(`${this.api}/slots/${slotId}`, {
+    withCredentials: true
+  });
 }
 
 }

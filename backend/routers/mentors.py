@@ -96,3 +96,41 @@ def get_slots_by_availability_id(id: int, db: Session = Depends(get_db), user=De
     print("i am giving slots")
     return slots
 
+@router.delete("/slots/{slot_id}")
+def delete_slot(slot_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
+
+    # Ensure only mentor can delete
+    if user.role != "mentor":
+        raise HTTPException(status_code=403, detail="Only mentors can delete slots")
+
+    # Fetch slot
+    slot = db.query(TimeSlot).filter(
+        TimeSlot.id == slot_id,
+        TimeSlot.mentor_id == user.id
+    ).first()
+
+    if not slot:
+        raise HTTPException(status_code=404, detail="Slot not found")
+
+    availability_id = slot.availability_id
+
+    # Delete slot
+    db.delete(slot)
+    db.commit()
+
+    # Check if availability now has ZERO remaining slots
+    remaining_slots = db.query(TimeSlot).filter(
+        TimeSlot.availability_id == availability_id
+    ).count()
+
+    if remaining_slots == 0:
+        availability = db.query(Availability).filter(
+            Availability.id == availability_id,
+            Availability.mentor_id == user.id
+        ).first()
+
+        if availability:
+            db.delete(availability)
+            db.commit()
+
+    return {"message": "Slot deleted successfully"}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../services/profile.service';
@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
   templateUrl: './mentor-profile.html',
   styleUrl: './mentor-profile.css',
 })
-export class MentorProfile {
+
+export class MentorProfile implements OnInit {
   profileForm: any;
   previewUrl: string | null = null;
   selectedFile!: File;
@@ -25,6 +26,33 @@ export class MentorProfile {
       expertise: ['', Validators.required],
       public_slug: ['', Validators.required],
       photo_url: ['']
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadExistingProfile();
+  }
+
+  // Load profile so fields come pre-filled as it will be beneficial for edit profile page
+  loadExistingProfile() {
+    this.profileService.getMyProfile().subscribe({
+      next: (profile: any) => {
+        if (!profile) return;
+
+        this.profileForm.patchValue({
+          bio: profile.bio,
+          expertise: profile.expertise,
+          public_slug: profile.public_slug,
+          photo_url: profile.photo_url
+        });
+
+        if (profile.photo_url) {
+          this.previewUrl = profile.photo_url;
+        }
+      },
+      error: () => {
+        this.message = "Failed to load profile.";
+      }
     });
   }
 
@@ -83,4 +111,6 @@ export class MentorProfile {
       this.saving = false;
     }
   }
+
+
 }
