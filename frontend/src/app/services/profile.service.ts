@@ -10,12 +10,12 @@ export class ProfileService {
   constructor(private http: HttpClient) {}
 
   getMyProfile():Observable<any> {
-    return this.http.get<any>(`${this.api}/me`);
+    return this.http.get<any>(`${this.api}/me`, { withCredentials: true });
   }
 
   updateProfile(data: any):Observable<any>{
     console.log("I came on update Profile function.")
     console.log(data)
-    return this.http.put<any>(`${this.api}/update`, data);
+    return this.http.put<any>(`${this.api}/update`, data, { withCredentials: true });
   }
 }

@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'mentor/profile', component: MentorProfile },
-  { path: 'mentor/profile-edit', component: MentorProfileEdit},
+  { path: 'mentor/profile-edit', component: MentorProfile},
   { path: 'dashboard', component: Dashboard}
 
 ];

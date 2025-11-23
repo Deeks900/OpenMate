@@ -5,7 +5,9 @@ import models, schemas
 from database import get_db
 from auth import hash_password, verify_password, create_access_token, create_refresh_token
 from datetime import timedelta
-
+from config import settings
+from jose import JWTError, jwt, ExpiredSignatureError
+from auth import get_current_user
 
 #tags will be helpful in grouping in Swagger Docs
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -120,3 +122,26 @@ def refresh_token(response: Response, refresh_token: str = Cookie(None), db: Ses
     access_token = create_access_token({"sub": str(user.id), "role": user.role})
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+#Logout end point
+@router.post("/logout")
+def logout(response: Response, db: Session = Depends(get_db), user = Depends(get_current_user)):
+    """
+    1. Delete stored refresh token from DB
+    2. Clear refresh token cookie
+    3. Do NOT delete user or any data
+    """
+
+    # Remove refresh token from DB
+    user.refresh_token = None
+    db.commit()
+
+    # Clear refresh token cookie
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        secure=True,
+        samesite="None"
+    )
+
+    return {"message": "Logged out successfully"}

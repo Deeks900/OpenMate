@@ -184,12 +184,28 @@ toggleSlots(avail: any): void {
   }
 
   // Profile actions
-  goToEditProfile(): void { this.router.navigate(['/profile/edit']); }
-  signOut(): void {
-    this.auth.logout();
-    this.router.navigate(['/login']);
+  goToEditProfile(): void { 
+    this.router.navigate(['mentor/profile-edit']); 
   }
 
+
+signOut() {
+  this.auth.logout().subscribe({
+    next: () => {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_role');
+      this.router.navigate(['/login']);
+    },
+    error: () => {
+      // Even if backend logout fails → clear local storage
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_role');
+      this.router.navigate(['/login']);
+    }
+  });
+}
+
+  
   loadProfile(): void { 
     this.profileService.getMyProfile().subscribe({ 
       next: (res: any) => this.profile = res, error: () => this.profile = null 
@@ -197,13 +213,22 @@ toggleSlots(avail: any): void {
 
     // Delete a single slot
 deleteSlot(slotId: number): void {
-  if (!confirm('Delete this slot?')) return;
-
+  if (!confirm("Are you sure you want to delete this slot?")) return;
+  
   this.mentorService.deleteSlot(slotId).subscribe({
     next: () => {
       this.message = 'Slot deleted';
-      // Remove the deleted slot from the displayed slots
+      // 1. Remove slot from displayed slots
       this.slotsForShownAvailability = this.slotsForShownAvailability.filter(s => s.id !== slotId);
+      // 2. Check if no slots left → remove availability card also
+      if (this.slotsForShownAvailability.length === 0) {
+        this.filteredAvailability = this.filteredAvailability.filter(
+          a => a.id !== this.displayedSlotsForAvailabilityId
+        );
+
+        // collapse slots section
+        this.displayedSlotsForAvailabilityId = null;
+      }
     },
     error: (err: any) => {
       this.message = err?.error?.detail || 'Failed to delete slot';
