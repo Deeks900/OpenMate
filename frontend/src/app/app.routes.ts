@@ -4,6 +4,7 @@ import { Register } from './pages/register/register';
 import { MentorProfile } from './pages/mentor-profile/mentor-profile';
 import { MentorProfileEdit } from './pages/mentor-profile-edit/mentor-profile-edit';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { MenteeHome } from './pages/mentee-home/mentee-home';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -11,6 +12,6 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'mentor/profile', component: MentorProfile },
   { path: 'mentor/profile-edit', component: MentorProfile},
-  { path: 'dashboard', component: Dashboard}
-
+  { path: 'dashboard', component: Dashboard},
+  { path: 'mentee-home', component: MenteeHome }
 ];

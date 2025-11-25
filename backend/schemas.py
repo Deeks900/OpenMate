@@ -28,7 +28,7 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str  
-    role: str  
+    role: Optional[str] = None
 
 class ProfileUpdate(BaseModel):
     bio: str
@@ -59,6 +59,7 @@ class BookingResponse(BaseModel):
     date: str
     time: str
     booking_time: datetime
+    video_link: str
 
     class Config:
         orm_mode = True
@@ -91,3 +92,5 @@ class TimeSlotResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+

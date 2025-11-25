@@ -62,4 +62,8 @@ export class AuthService {
     );
 }
 
+getCurrentUser(){
+  return this.http.get(`${this.apiUrl}/auth/get_current_user`, { withCredentials: true });
+}
+
 }

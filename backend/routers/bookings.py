@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
+from config import settings
 
 from database import get_db
 from auth import get_current_user
@@ -8,7 +9,6 @@ from models import TimeSlot, Booking, User
 from schemas import BookingCreate, BookingResponse
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
-
 
 @router.post("/", response_model=BookingResponse)
 def create_booking(data: BookingCreate, db: Session = Depends(get_db), user=Depends(get_current_user)):
@@ -56,3 +56,5 @@ def mentor_bookings(db: Session = Depends(get_db), user=Depends(get_current_user
         raise HTTPException(status_code=403, detail="Only mentors can access this")
 
     return db.query(Booking).filter(Booking.mentor_id == user.id).all()
+
+

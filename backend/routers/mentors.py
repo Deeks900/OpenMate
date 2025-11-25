@@ -1,13 +1,89 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database import get_db
-from schemas import AvailabilityCreate, AvailabilityResponse, TimeSlotResponse
-from models import Availability, TimeSlot
+from schemas import AvailabilityCreate, AvailabilityResponse, TimeSlotResponse, ProfileResponse
+from models import Availability, TimeSlot, User, Profile, Booking
 from auth import get_current_user
 from datetime import datetime, timedelta
 from sqlalchemy import and_
+import re
+from config import settings
+import requests
+import base64
+
+#Standard Python module to send emails via SMTP.
+import smtplib
+#Helps construct rich emails (HTML + plain text)
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 router = APIRouter(prefix="/mentors", tags=["Mentors"])
+
+#Zoom Meeting
+CLIENT_ID = settings.CLIENT_ID
+CLIENT_SECRET = settings.CLIENT_SECRET
+# Email config
+#Gmail SMTP server and port for sending emails.
+SMTP_SERVER = 'smtp.gmail.com'
+SMTP_PORT = 587
+#Credentials of the email account sending the messages.
+EMAIL_USERNAME = settings.EMAIL_USERNAME
+EMAIL_PASSWORD = settings.EMAIL_PASSWORD
+
+
+def get_zoom_access_token():
+    url = "https://zoom.us/oauth/token"
+
+    # Base64 encoding for Basic auth
+    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    headers = {
+        "Authorization": "Basic " + base64.b64encode(auth_str.encode()).decode(),
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    data = {
+        "grant_type": "account_credentials",
+        "account_id": settings.ZOOM_ACCOUNT_ID
+    }
+
+    # MUST be data= not params=
+    response = requests.post(url, data=data, headers=headers)
+
+    if response.status_code != 200:
+        print("\nZOOM TOKEN ERROR:", response.text)
+        raise Exception("Failed to get access token")
+
+    return response.json()["access_token"]
+    
+def create_zoom_meeting(start_time, duration_minutes, topic="OpenMate Session"):
+    token = get_zoom_access_token()
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "topic": topic,
+        "type": 2,  # Scheduled meeting
+        "start_time": start_time,  # ISO format: "2025-11-25T10:00:00Z"
+        "duration": duration_minutes,
+        "timezone": "Asia/Kolkata",
+        "settings": {
+            "host_video": True,
+            "participant_video": True,
+            "join_before_host": False
+        }
+    }
+
+    response = requests.post(
+        "https://api.zoom.us/v2/users/me/meetings",
+        headers=headers,
+        json=data
+    )
+    res_json = response.json()
+    return res_json.get("join_url")
+
+
 
 #This function will be generating slots within the availability time depending upon slot duration submitted
 def generate_slots(start, end, duration):
@@ -134,3 +210,180 @@ def delete_slot(slot_id: int, db: Session = Depends(get_db), user=Depends(get_cu
             db.commit()
 
     return {"message": "Slot deleted successfully"}
+
+#This endpoit will be call to show all mentors 
+@router.get('/mentors-list', response_model=list[ProfileResponse])
+def get_all_mentors(db: Session = Depends(get_db)):
+    #Through join solving N+1 query profile
+    mentors = db.query(User).join(Profile).filter(User.role == "mentor").all()
+    return [
+        Profile(
+           id = m.profile.id,
+           user_id = m.id,
+           user_name = m.name,
+           bio = m.profile.bio if m.profile else "",
+           expertise = m.profile.expertise if m.profile else "",
+           public_slug = m.profile.public_slug if m.profile else "",
+           photo_url = m.profile.photo_url if m.profile else "",
+        ) for m in mentors
+    ]
+
+#This end point to show all available slots of a particular mentor 
+@router.get('/slots/{mentor_id}')
+def get_available_slots(mentor_id: int, date: str = Query(..., description="Date to get slots for in YYYY-MM-DD format"), db: Session = Depends(get_db)):
+    slots = (db.query(TimeSlot)
+            .filter(TimeSlot.mentor_id == mentor_id, TimeSlot.date == date, TimeSlot.is_booked==0)
+            .all()
+    )
+    if not slots:
+        return []
+
+    return [
+        f"{slot.start_time} - {slot.end_time}"
+        for slot in slots
+    ]    
+
+
+
+def send_email(to_email, subject, body):
+    #Creates an email object that can contain HTML + attachments
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_USERNAME
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    #Attach HTML content to the email.
+    msg.attach(MIMEText(body, 'html'))
+    #Connects to Gmail SMTP server.
+    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+    #Secures the connection using TLS.
+    server.starttls()
+    
+    #Authenticates the email account.
+    server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
+    server.send_message(msg)
+    #Closes the connection.
+    server.quit()       
+
+#This end point will be used to book slot 
+@router.post("/book-slot")
+def book_slot(data: dict, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    mentor_id = data["mentor_id"]
+    slot_text = data["slot"]
+    date = data["date"]
+    start, end = re.split(r"\s*[-–—]\s*", slot_text)
+
+    # Validate mentor and mentee exist
+    mentor = db.query(User).filter(User.id == mentor_id).first()
+    if not mentor:
+        raise HTTPException(status_code=400, detail="Mentor or mentee not found")
+
+    #Grab this slot
+    slot = db.query(TimeSlot).filter(
+        TimeSlot.mentor_id == mentor_id,
+        TimeSlot.start_time == start,
+        TimeSlot.end_time == end,
+        TimeSlot.is_booked == 0
+    ).first()
+
+    if not slot:
+        raise HTTPException(status_code=404, detail="Slot not available")
+
+    slot.is_booked = 1
+    db.commit()
+
+    start_dt = datetime.strptime(f"{date} {start}", "%Y-%m-%d %H:%M")
+    end_dt = datetime.strptime(f"{date} {end}", "%Y-%m-%d %H:%M")
+    duration = int((end_dt - start_dt).total_seconds() / 60)
+
+    # Create Zoom meeting
+    video_link = create_zoom_meeting(start_dt.isoformat(), duration, topic="OpenMate Session")
+
+    # Create booking record
+    booking = Booking(
+        mentor_id=mentor_id,
+        mentee_id=user.id,
+        time=slot_text,
+        date=date,
+        video_link=video_link
+    )
+    db.add(booking)
+    db.commit()
+    db.refresh(booking)
+
+    # Send email to both mentor and mentee
+    email_body = f"""
+<p>Your session has been booked!</p>
+<p>Mentor: {mentor.profile.user_name}</p>
+<p>Mentee: {user.profile.user_name}</p>
+<p>Slot: {slot_text} on {date}</p>
+<p>Join via Zoom: <a href="{video_link}">{video_link}</a></p>
+"""
+   
+    send_email(mentor.email, "New Session Booked", email_body)
+    send_email(user.email, "Session Confirmation", email_body)
+
+    return {"message": "Booking confirmed", "video_link": video_link}
+
+def normalize_time_range(time_string: str):
+    # Remove extra spaces
+    cleaned = time_string.replace(" ", "")
+    # Split by dash
+    start, end = cleaned.split("-")
+    return start, end
+
+#This will be showing all bookings of a mentor
+@router.get("/bookings")
+def get_mentor_bookings(db: Session = Depends(get_db), user=Depends(get_current_user)):
+
+    mentor_id = user.id
+
+    # All booked slots for this mentor
+    slots = db.query(TimeSlot).filter(
+        TimeSlot.mentor_id == mentor_id,
+        TimeSlot.is_booked == True
+    ).all()
+
+    results = []
+
+    for slot in slots:
+
+        # Find the matching booking for this date + slot time
+        booking = db.query(Booking).filter(
+            Booking.mentor_id == mentor_id,
+            Booking.date == slot.date
+        ).all()
+
+        matched_booking = None
+        video_link = None
+        mentee_name = None
+        mentee_email = None
+
+        for b in booking:
+            try:
+                start, end = normalize_time_range(b.time)
+
+                if start == slot.start_time and end == slot.end_time:
+                    matched_booking = b
+                    video_link = b.video_link
+
+                    # mentee details
+                    if b.mentee:
+                        mentee_name = b.mentee.profile.user_name
+                        mentee_email = b.mentee.email
+                    break
+            except:
+                pass
+
+        results.append({
+            "booking_id": matched_booking.id if matched_booking else None,
+            "date": slot.date,
+            "start_time": slot.start_time,
+            "end_time": slot.end_time,
+            "slot": f"{slot.start_time} - {slot.end_time}",
+            "mentor_id": slot.mentor_id,
+            "video_link": video_link,
+            "mentee_name": mentee_name,
+            "mentee_email": mentee_email
+        })
+
+    return results

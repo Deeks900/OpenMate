@@ -52,12 +52,7 @@ export class Register {
             const role = res.role;
             console.log("Role is")
             console.log(role)
-
-            if (role === 'mentor') {
-              this.router.navigate(['/mentor/profile']); // route to profile update page
-            } else {
-              this.router.navigate(['/dashboard']); // mentee dashboard
-            }
+            this.router.navigate(['/mentor/profile']); // route to profile update page
           }
         });
       },

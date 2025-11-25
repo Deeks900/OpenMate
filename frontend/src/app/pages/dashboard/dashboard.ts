@@ -52,6 +52,7 @@ export class Dashboard implements OnInit {
   slotsForShownAvailability: any[] = [];
   selectedDate: string | null = null;
   displayedSlotsDate: string | null = null;
+  minDate: string = '';
   
   constructor(
     private fb: FormBuilder,
@@ -64,6 +65,11 @@ export class Dashboard implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const today = new Date();
+    this.minDate = today.getFullYear() + '-' +
+                   String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                   String(today.getDate()).padStart(2, '0');
+
     this.availabilityForm = this.fb.group({
       date: [new Date(), Validators.required],
       start_time: ['09:00', Validators.required],
@@ -135,7 +141,8 @@ export class Dashboard implements OnInit {
   loadMyAvailability(): void {
     this.mentorService.getMyAvailability().subscribe({
       next: (res: any) => {
-        this.myAvailability = res || [];
+        const todayStr = this.datePipe.transform(new Date(), 'yyyy-MM-dd')!;
+        this.myAvailability = (res || []).filter((a:any) => a.date >= todayStr); ;
         this.filterAvailability(); // update filtered list
       },
       error: () => {
@@ -177,8 +184,11 @@ toggleSlots(avail: any): void {
 
   // Load mentor bookings
   loadMentorBookings(): void {
-    this.bookingService.getMentorBookings().subscribe({
-      next: (res: any) => this.bookings = res || [],
+    this.mentorService.getMentorBookings().subscribe({
+      next: (res: any) => {
+        const todayStr = this.datePipe.transform(new Date(), 'yyyy-MM-dd')!;
+        this.bookings = (res || []).filter((b:any) => b.date >= todayStr);
+      },
       error: () => this.bookings = []
     });
   }
@@ -235,5 +245,11 @@ deleteSlot(slotId: number): void {
     }
   });
 }
+
+joinMeeting(link: string): void {
+  if (!link) return;
+  window.open(link, '_blank');  
+}
+
 
 }

@@ -10,8 +10,6 @@ router = APIRouter(prefix="/profile", tags=["Profile"])
 @router.put("/update", response_model=ProfileResponse)
 def update_profile(data: ProfileUpdate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     print(f"Update profile function is running.")
-    if user.role != "mentor":
-        raise HTTPException(status_code=403, detail="Only mentors can update profile")
 
     profile = db.query(Profile).filter(Profile.user_id == user.id).first()
 
