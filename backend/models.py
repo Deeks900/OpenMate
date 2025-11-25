@@ -68,6 +68,7 @@ class Booking(Base):
     time = Column(String)
     booking_time = Column(DateTime, default=datetime.utcnow)  
     status = Column(String, default="confirmed")
+    video_link = Column(String, nullable=True) 
     
     #Relationship
     #This basically works like that when you will do Booking.mentor.name then internally it will be like Joining Users and Booking table on user.id == mentor-id and this back populates is used so books_as_mentor and mentor could be in sync

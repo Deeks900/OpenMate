@@ -7,7 +7,12 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     DATABASE_URL: str
-    
+    CLIENT_ID : str
+    CLIENT_SECRET: str
+    EMAIL_PASSWORD: str
+    EMAIL_USERNAME: str
+    ZOOM_ACCOUNT_ID: str
+
     #This class Pydantic expects so that it can know from which file it needs to load values in the class members above
     class Config:
         env_file = ".env"

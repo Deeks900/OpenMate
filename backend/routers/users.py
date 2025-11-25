@@ -31,7 +31,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
 
     #Now if the user is a mentor we will be creating a profile of the user 
-    if db_user.role == "mentor":
+    if db_user.role == "mentor" or db_user.role == "mentee":
         # Generate public slug (unique link) => name-use-lowercase-with-dashes
         slug = db_user.name.lower().replace(" ", "-") + f"{db_user.id}"
 
@@ -145,3 +145,7 @@ def logout(response: Response, db: Session = Depends(get_db), user = Depends(get
     )
 
     return {"message": "Logged out successfully"}
+
+@router.get('/get_current_user')
+def get_current_user(user = Depends(get_current_user))   :
+    return user  

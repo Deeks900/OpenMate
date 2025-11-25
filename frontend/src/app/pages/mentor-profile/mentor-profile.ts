@@ -2,6 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../services/profile.service';
+import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 
@@ -20,7 +21,7 @@ export class MentorProfile implements OnInit {
   message: string = "";
   saving: boolean = false;
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService, private router: Router) {
+  constructor(private fb: FormBuilder, private profileService: ProfileService, private authService: AuthService, private router: Router) {
     this.profileForm = this.fb.group({
       bio: ['', Validators.required],
       expertise: ['', Validators.required],
@@ -100,13 +101,33 @@ export class MentorProfile implements OnInit {
         expertise: this.profileForm.value.expertise,
         public_slug: this.profileForm.value.public_slug,
         photo_url: imageUrl
-      }).subscribe(() => {
+      }).subscribe({
+      next: () => {
         this.message = "Profile saved successfully!";
         this.saving = false;
-        this.router.navigate(['/dashboard']);
-      });
 
-    } catch (error) {
+        // Fetch current user to check role
+        this.authService.getCurrentUser().subscribe({
+          next: (user:any) => {
+            if (user.role === 'mentor') {
+              this.router.navigate(['/dashboard']);
+            } else {
+              this.router.navigate(['/mentee-home']);
+            }
+          },
+          error: () => {
+            // fallback
+            this.router.navigate(['/']);
+          }
+        });
+      },
+      error: (err) => {
+        this.message = "Failed to save profile. Try again.";
+        this.saving = false;
+      }
+    });
+
+  } catch (error) {
       this.message = "Failed to upload image. Try again.";
       this.saving = false;
     }

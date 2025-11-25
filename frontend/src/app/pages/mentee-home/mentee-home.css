@@ -1,0 +1,562 @@
+.animated-bg {
+  height: 100vh;    /* full viewport height */
+  width: 100vw; 
+  display: block;
+  padding-top: 2px;
+  padding-left: 0px;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at 20% 20%, #0a2540, #000000 70%);
+  position: relative;
+}
+
+/* FLOATING LIGHT CLOUDS */
+.animated-bg::before, .animated-bg::after {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.45), transparent 70%);
+  animation: float 8s infinite ease-in-out alternate;
+  filter: blur(120px);
+}
+.animated-bg::after {
+  animation-delay: 4s;
+  left: 60%;
+  top: 40%;
+  z-index: 0;
+}
+@keyframes float {
+  0% { transform: translate(-20%, -10%) scale(1); }
+  100% { transform: translate(20%, 10%) scale(1.4); }
+}
+
+.openmate-logo {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  margin-bottom: 20px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+
+  color: #e9f7ff;
+  z-index: 999;
+
+  /* subtle neon glow */
+  text-shadow: 
+    0 0 6px rgba(0,200,255,0.7),
+    0 0 12px rgba(0,200,255,0.4);
+
+  user-select: none;
+  pointer-events: none; 
+}
+
+
+
+/* HALO GLOW BEHIND CARD */
+.halo {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,170,255,0.35), transparent 70%);
+  filter: blur(90px);
+  animation: haloRotate 18s infinite linear;
+  pointer-events: none;
+}
+@keyframes haloRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.25); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+/* PARTICLES */
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.particles span {
+  position: absolute;
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: rgba(0, 200, 255, 0.45);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 200, 255, 0.8);
+  animation: floatParticle 12s infinite ease-in-out;
+}
+.particles span:nth-child(1) { top: 10%; left: 20%; animation-duration: 14s; }
+.particles span:nth-child(2) { top: 50%; left: 70%; animation-duration: 18s; }
+.particles span:nth-child(3) { top: 30%; left: 40%; animation-duration: 16s; }
+.particles span:nth-child(4) { top: 80%; left: 25%; animation-duration: 20s; }
+.particles span:nth-child(5) { top: 65%; left: 85%; animation-duration: 22s; }
+.particles span:nth-child(6) { top: 15%; left: 75%; animation-duration: 19s; }
+.particles span:nth-child(7) { top: 45%; left: 15%; animation-duration: 21s; }
+.particles span:nth-child(8) { top: 90%; left: 60%; animation-duration: 24s; }
+.particles span:nth-child(9) { top: 70%; left: 45%; animation-duration: 26s; }
+.particles span:nth-child(10){ top: 25%; left: 90%; animation-duration: 28s; }
+
+@keyframes floatParticle {
+  0% { transform: translateY(0px) scale(1); opacity: .8; }
+  50% { transform: translateY(-40px) scale(1.4); opacity: 1; }
+  100% { transform: translateY(0px) scale(1); opacity: .8; }
+}
+
+.home-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  max-width: 1300px;
+  margin-top: 40px;
+  margin: 80px auto 0 auto;  /* centers magically */
+  padding: 0 20px; 
+}
+
+.left-section {
+  width: 65%;
+}
+.right-section {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  margin-left: 80px; 
+  
+}
+
+.search-section {
+  position: sticky;
+  top: 100px;
+  background: rgba(255,255,255,0.08);
+  padding: 20px;
+  border-radius: 18px;
+  backdrop-filter: blur(25px);
+  margin-bottom: 25px;
+  margin-top: 30px;
+}
+
+.search-input {
+  position: sticky;
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.09);
+  color: #e9f7ff;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s ease;
+  z-index: 10;
+}
+
+.search-input:focus {
+  border-color: #64d7ff;
+  box-shadow: 0 0 12px rgba(0,200,255,0.5);
+  z-index:10;
+}
+
+/* MENTOR GRID */
+.mentor-grid {
+  display: flex;
+  flex-direction: column;    /* 🔥 makes it vertical */
+  gap: 25px;                 /* spacing between cards */
+  align-items: center;       /* centers each card */
+  margin-top: 20px;
+  align-items: start; 
+}
+.glass-card {
+  position: relative; 
+  width: 100%;
+  padding: 35px 20px 40px 20px; /* bottom padding bigger for dropdown + button */
+  border-radius: 16px;
+  text-align: center;
+  color: #e9f1ff;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.glass-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.65);
+}
+
+/* SHIMMER BORDER */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none; 
+  background: linear-gradient(120deg, #00d4ff, #338bff, #7d5dff, #00d4ff);
+  background-size: 300% 300%;
+  animation: shimmer 6s infinite linear;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 150% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+/* MENTOR CARD */
+.mentor-card {
+  padding: 18px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-wrapper-small {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255,255,255,0.3);
+  margin-bottom: 10px;
+}
+
+.avatar-img-small {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* TEXTS */
+.mentor-name {
+  color: #e9f1ff;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mentor-expertise {
+  color: #90d2ff;
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.mentor-bio {
+  color: #c7dfff;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+/* BUTTONS */
+.mentor-actions button {
+  width: 100%;
+  margin-top: 8px;
+  font-weight: 600;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: auto;
+  padding: 10px 18px;
+}
+
+/* BUTTON */
+.glass-btn {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 10px;
+  border-color: white;
+  background: linear-gradient(135deg, #56d7ff, #6b57ff);
+  color: white !important;
+  font-weight: 600;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(212, 217, 219, 0.55);
+}
+.glass-btn:hover {
+  box-shadow: 0 0 22px rgba(0, 200, 255, 1);
+  transform: translateY(-3px) scale(1.03);
+}
+
+.book-btn:hover {
+  transform: scale(1.05);
+}
+
+/* RIGHT SIDE QUOTE CARD */
+.quote-card {
+  width: 500px;
+  padding: 30px;
+  height: fit-content;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.quote-text {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #d9edff;
+}
+
+.quote-author {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #9bcfff;
+  opacity: 0.9;
+}
+
+/* FIX SEARCH BAR POSITION */
+.search-section {
+  position: sticky;
+  top: 20px;
+  z-index: 50;
+}
+
+/* BOOKING UI CARD */
+.booking-card {
+  padding: 30px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.25);
+  min-height: 250px;
+  color: #e2f3ff;
+}
+.booking-card.active {
+  display: block;
+}
+
+.quote-skeleton, .author-skeleton {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  height: 18px;
+  margin-bottom: 8px;
+  animation: shimmer 1.2s infinite;
+}
+
+.quote-skeleton {
+  width: 80%;
+}
+
+.author-skeleton {
+  width: 40%;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+.booking-card {
+  padding: 20px;
+  margin-top: 25px;
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.booking-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.slot-dropdown {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.3);
+  color: #000;
+  color: white !important;
+  font-size: 16px;
+}
+
+.book-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.no-slots-message {
+  color: #ffdddd;
+  background: rgba(255, 0, 0, 0.15);
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.glass-snackbar {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  color: #e9f7ff;
+}
+
+.success-snackbar {
+  background: #4caf50 !important;
+  color: white !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.error-snackbar {
+  background: #e53935 !important;
+  color: white !important;
+}
+
+.slot-date-picker {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 15px;
+  backdrop-filter: blur(15px);
+}
+
+.slot-date-picker::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Makes the calendar icon white */
+}
+
+/* Disabled button styles */
+.book-btn:disabled {
+  background: rgba(100, 100, 100, 0.5); /* greyed out */
+  color: #ccc !important;               /* lighter text */
+  cursor: not-allowed;                  /* shows disabled cursor */
+  box-shadow: none;                     /* remove hover effect */
+  transform: none;                      /* prevent hover scale */
+}
+
+/* Optional: hover style for disabled button */
+.book-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.loader {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.8s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.bookings-card {
+  width: 500px;
+  margin-top: 5px;
+  padding: 15px;
+}
+
+.bookings-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.bookings-scroll {
+  max-height: 100px;     /* slider height */
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.booking-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.1);
+}
+
+.booking-mentor {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.booking-email {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.booking-date {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.join-btn {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.booking-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 4px;
+}
+
+.logo-greeting {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+   right: 25px;  
+  display: flex;   
+  justify-content: space-between;      
+  align-items: center;   /* vertically centers logo and greeting */          
+  z-index: 999;
+  padding-right: 20px; 
+}
+
+.openmate-logo {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #e9f7ff;
+  text-shadow: 0 0 6px rgba(0,200,255,0.7), 0 0 12px rgba(0,200,255,0.4);
+  margin: 0;             /* remove extra spacing */
+  position: static;      /* important: remove absolute positioning */
+}
+
+.greeting {
+  font-size: 22px;
+  font-weight: 500;
+  color: #e9f7ff;
+  text-shadow: 0 0 6px rgba(0,200,255,0.7);
+  margin-right: 150px; 
+}

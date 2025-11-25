@@ -1,0 +1,161 @@
+
+<div class="animated-bg">
+ <div class="logo-greeting">
+    <h1 class="openmate-logo">OpenMate</h1>
+    <h2 class="greeting">{{ greetingMessage }}</h2>
+</div>
+   <!-- PARTICLES -->
+  <div class="particles">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- HALO GLOW -->
+  <div class="halo"></div>
+
+  <div class="home-container">
+
+      <div class="left-section">
+
+        <!-- 🔍 SEARCH BAR -->
+    <div class="search-section glass-card">
+      <input 
+        type="text"
+        placeholder="Search mentor by name or expertise..."
+        class="search-input"
+        [(ngModel)]="searchText"
+        (input)="filterMentors()"
+      />
+    </div>
+
+    <!--MENTOR GRID -->
+    <div class="mentor-grid" >
+       
+
+      <div *ngFor="let m of filteredMentors" class="mentor-card glass-card">
+
+        <div class="avatar-wrapper-small">
+          <img [src]="m.photo_url" class="avatar-img-small" />
+        </div>
+
+        <div class="mentor-info">
+          <div class="mentor-name">{{ m.user_name }}</div>
+          <div class="mentor-expertise">{{ m.expertise }}</div>
+          <div class="mentor-bio">{{ m.bio }}</div>
+          <div class="mentor-bio">{{ m.public_slug }}</div>
+        </div>
+
+        <div class="mentor-actions">
+          <button mat-raised-button class="glass-btn" (click)="openBookingCard(m)">
+            Book Session
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+      </div>
+
+      <div class="right-section">
+
+         <!-- SIDE QUOTE CARD -->
+<div class="quote-card glass-card">
+  <!-- Show placeholder until quote arrives -->
+  <ng-container *ngIf="quoteLoaded; else placeholder">
+    <p class="quote-text">“{{ quoteText }}”</p>
+    <p class="quote-author">— {{ quoteAuthor }}</p>
+  </ng-container>
+
+  <!-- Placeholder skeleton -->
+  <ng-template #placeholder>
+    <div class="quote-skeleton"></div>
+    <div class="author-skeleton"></div>
+  </ng-template>
+
+  <!--BOOKING CARD (Visible only when a mentor is selected) -->
+<div *ngIf="selectedMentor" class="booking-card glass-card fade-in">
+
+  <h3 class="booking-title">
+    Book Session with {{ selectedMentor.user_name }}
+  </h3>
+
+   <!-- DATE PICKER -->
+  <label for="sessionDate" class="date-label">Select Date:</label>
+  <input 
+    type="date" 
+    id="sessionDate" 
+    [(ngModel)]="selectedDate" 
+    (change)="onDateChange()"
+    class="slot-date-picker"
+    [min]="minDate"
+  />
+
+  <!-- DROPDOWN FOR SLOTS -->
+  <select *ngIf="selectedDate && mentorSlots.length > 0" class="slot-dropdown" [(ngModel)]="selectedSlot">
+    <option value="" disabled selected>Select a time slot</option>
+    <option *ngFor="let s of mentorSlots" [value]="s">
+      {{ s }}
+    </option>
+  </select>
+
+  <!-- NO SLOTS MESSAGE -->
+<div *ngIf="noSlots" class="no-slots-message">
+  No slots available for this mentor on the selected date.
+</div>
+
+  <!-- BOOK BUTTON -->
+  <button 
+    class="book-btn glass-btn"
+    [disabled]="noSlots || !selectedSlot"
+    (click)="confirmBooking()"
+  >
+    <span *ngIf="!isBooking">Confirm Booking</span>
+
+  <!-- Simple CSS spinner -->
+  <div *ngIf="isBooking" class="loader"></div>
+  </button>
+</div>
+
+      </div>
+
+    <!-- UPCOMING BOOKINGS CARD -->
+<div class="bookings-card glass-card" *ngIf="bookingsLoaded">
+  <h3 class="bookings-title">Your Upcoming Sessions</h3>
+
+  <div class="bookings-list">
+
+    <div *ngIf="menteeBookings.length === 0" class="no-bookings">
+      No upcoming sessions.
+    </div>
+
+    <!-- SLIDER / SCROLL AREA -->
+    <div class="bookings-scroll" *ngIf="menteeBookings.length > 0">
+      
+      <div class="booking-row" *ngFor="let b of menteeBookings">
+        <div class="booking-info">
+          <div class="booking-mentor">{{ b.mentor_name }}</div>
+          <div class="booking-email">{{ b.mentor_email }}</div>
+          <div class="booking-date">{{ b.date }} — {{ b.time }}</div>
+        </div>
+
+        <button 
+          class="join-btn glass-btn"
+          *ngIf="b.video_link"
+          (click)="openLink(b.video_link)">
+          Join
+        </button>
+        
+      </div>
+
+    </div>
+
+  </div>
+</div>  
+
+   
+
+
+  </div>
+
+</div>
