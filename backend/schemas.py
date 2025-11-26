@@ -33,6 +33,7 @@ class TokenResponse(BaseModel):
 class ProfileUpdate(BaseModel):
     bio: str
     expertise: str
+    public_slug: str
     photo_url: Optional[str] = None
 
 

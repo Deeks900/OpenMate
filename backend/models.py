@@ -36,7 +36,7 @@ class Profile(Base):
     user_name = Column(String)
     bio = Column(Text)
     expertise = Column(String)
-    public_slug = Column(String, unique=True)
+    public_slug = Column(String)
     photo_url = Column(String, nullable=True)
  
     #SQLAlchemy Specific 
