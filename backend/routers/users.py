@@ -40,7 +40,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
             user_name=db_user.name,
             bio="",
             expertise="",
-            public_slug=slug,
+            public_slug="",
             photo_url=None
         )
         db.add(new_profile)

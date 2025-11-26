@@ -96,6 +96,7 @@ export class MentorProfile implements OnInit {
       }
       
       console.log("I am creating the object to save")
+      onslotchange.log()
       this.profileService.updateProfile({
         bio: this.profileForm.value.bio,
         expertise: this.profileForm.value.expertise,

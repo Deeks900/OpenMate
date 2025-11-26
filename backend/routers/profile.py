@@ -15,6 +15,7 @@ def update_profile(data: ProfileUpdate, db: Session = Depends(get_db), user=Depe
 
     profile.bio = data.bio
     profile.expertise = data.expertise
+    profile.public_slug = data.public_slug
     if data.photo_url:
         profile.photo_url = data.photo_url
     
