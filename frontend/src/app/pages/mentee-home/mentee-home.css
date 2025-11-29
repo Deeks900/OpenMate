@@ -1,34 +1,34 @@
 .animated-bg {
-  height: 100vh;    /* full viewport height */
-  width: 100vw; 
-  display: block;
-  padding-top: 2px;
-  padding-left: 0px;
-  justify-content: center;
-  align-items: center;
+   min-height: 100dvh; /* dynamic viewport height */
+  height: auto;
+  width: 100%;
   background: radial-gradient(circle at 20% 20%, #0a2540, #000000 70%);
-  position: relative;
+  position: relative;  
+  overflow-x: hidden; /* prevents horizontal mismatch */
+  will-change: transform;
 }
 
 /* FLOATING LIGHT CLOUDS */
 .animated-bg::before, .animated-bg::after {
   content: "";
-  position: absolute;
   width: 600px;
-  height: 600px;
   background: radial-gradient(circle, rgba(0, 210, 255, 0.45), transparent 70%);
   animation: float 8s infinite ease-in-out alternate;
   filter: blur(120px);
+  z-index: -1 !important;    /* PUSH BEHIND ALL CONTENT */
+   position: absolute;    /* FIXES top/bottom white gap */
+  top: 0;
+  left: 0;
 }
 .animated-bg::after {
   animation-delay: 4s;
+  z-index: -1 !important;     /* FIXES top/bottom white gap */
   left: 60%;
   top: 40%;
-  z-index: 0;
 }
 @keyframes float {
-  0% { transform: translate(-20%, -10%) scale(1); }
-  100% { transform: translate(20%, 10%) scale(1.4); }
+  0% { transform: translate(-10%, -5%) scale(1); }
+  100% { transform: translate(10%, 5%) scale(1.15); }
 }
 
 .openmate-logo {
@@ -111,9 +111,9 @@
   gap: 40px;
   width: 100%;
   max-width: 1300px;
-  margin-top: 40px;
-  margin: 80px auto 0 auto;  /* centers magically */
+  margin: 100px auto 50px auto;
   padding: 0 20px; 
+  height:100%;
 }
 
 .left-section {
@@ -126,17 +126,6 @@
   gap: 50px;
   margin-left: 80px; 
   
-}
-
-.search-section {
-  position: sticky;
-  top: 100px;
-  background: rgba(255,255,255,0.08);
-  padding: 20px;
-  border-radius: 18px;
-  backdrop-filter: blur(25px);
-  margin-bottom: 25px;
-  margin-top: 30px;
 }
 
 .search-input {
@@ -162,11 +151,14 @@
 /* MENTOR GRID */
 .mentor-grid {
   display: flex;
-  flex-direction: column;    /* 🔥 makes it vertical */
+  flex-direction: column;   
   gap: 25px;                 /* spacing between cards */
   align-items: center;       /* centers each card */
-  margin-top: 20px;
+  margin-top: 25px;
+  margin-bottom: 15px;
   align-items: start; 
+  z-index: 10;
+  max-height: none;
 }
 .glass-card {
   position: relative; 
@@ -317,6 +309,7 @@
   position: sticky;
   top: 20px;
   z-index: 50;
+  bottom: 20px;
 }
 
 /* BOOKING UI CARD */
@@ -494,6 +487,7 @@
   padding-right: 8px;
 }
 
+
 .booking-row {
   display: flex;
   justify-content: space-between;
@@ -560,3 +554,9 @@
   text-shadow: 0 0 6px rgba(0,200,255,0.7);
   margin-right: 150px; 
 }
+
+.mentor-card:hover {
+  z-index: 150 !important;
+  position: relative;
+}
+

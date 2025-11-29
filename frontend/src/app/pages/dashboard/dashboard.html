@@ -14,16 +14,6 @@
 
     <!-- ===== LEFT SIDE PROFILE CARD ===== -->
     <div class="glass-card profile-card">
-
-        <!-- <div *ngIf="profile?.photo_url" class="default-avatar">
-        [src]="profile.photo_url"
-        class="mentor-photo" />
-        </div>
-        
-        <div *ngIf="!profile?.photo_url" class="default-avatar">
-        <img class="avatar-img" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" />
-        </div>  -->
-
         <div class="avatar-wrapper">
 
     <!-- Photo if available -->
@@ -44,10 +34,10 @@
 
   </div>
 
-      <h2 class="mentor-name">{{ profile?.name }}</h2>
+      <h2 class="mentor-name">{{ profile?.user_name }}</h2>
       <div class="mentor-expertise">{{ profile?.expertise || 'Your Expertise' }}</div>
       <p class="mentor-bio">{{ profile?.bio || 'Your Bio' }}</p>
-      <p class="mentor-bio">{{ profile?.public_slug || 'Your Public Profile'}}</p>
+      <p class="mentor-profile">{{ profile?.public_slug || 'Your Public Profile'}}</p>
 
       <button mat-raised-button color="primary" class="edit-btn" (click)="goToEditProfile()">
         Edit Profile
@@ -56,6 +46,7 @@
       <button mat-button class="logout-btn" (click)="signOut()">
         Logout
       </button>
+
     </div>
 
     <!-- ===== RIGHT CONTENT SECTION ===== -->

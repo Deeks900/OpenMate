@@ -60,12 +60,13 @@ class Availability(Base):
 #This table in db will be having all info about booking of the mentors 
 class Booking(Base):
     __tablename__ = "bookings"
-
+    
     id = Column(Integer, primary_key=True, index=True)
     mentor_id = Column(Integer, ForeignKey("users.id"))
     mentee_id = Column(Integer, ForeignKey("users.id"))
     date = Column(String)
     time = Column(String)
+    slot_id = Column(Integer, ForeignKey("time_slots.id")) 
     booking_time = Column(DateTime, default=datetime.utcnow)  
     status = Column(String, default="confirmed")
     video_link = Column(String, nullable=True) 
@@ -74,7 +75,7 @@ class Booking(Base):
     #This basically works like that when you will do Booking.mentor.name then internally it will be like Joining Users and Booking table on user.id == mentor-id and this back populates is used so books_as_mentor and mentor could be in sync
     mentor = relationship("User", back_populates="bookings_as_mentor", foreign_keys=[mentor_id])
     mentee = relationship("User", back_populates="bookings_as_mentee", foreign_keys=[mentee_id])
-
+    slot = relationship("TimeSlot")
 
 #This model is needed so that time slots can be configurable    
 class TimeSlot(Base):

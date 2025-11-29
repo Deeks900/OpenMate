@@ -25,6 +25,7 @@ def create_booking(data: BookingCreate, db: Session = Depends(get_db), user=Depe
 
     booking = Booking(
         mentor_id=slot.mentor_id,
+        slot_id=slot.id,
         mentee_id=user.id,   # mentee is the logged in user
         date=slot.date,
         time=f"{slot.start_time}-{slot.end_time}",

@@ -146,6 +146,7 @@
 /* Mentor Name */
 .mentor-name {
   margin-top: 16px;
+  margin-bottom: 15px;
   font-size: 22px;
   font-weight: 600;
 }
@@ -322,6 +323,16 @@ button[disabled] {
   font-size: 15px;
   opacity: 0.85;
   color: #e0e8ff;
+  line-height: 1.6;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.mentor-profile {
+  font-size: 15px;
+  opacity: 0.85;
+  color: #e0e8ff;
+  margin-top: 10px;
 }
 
 /* ========== FILTERED AVAILABILITY LIST ========== */
