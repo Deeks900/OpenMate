@@ -304,7 +304,8 @@ def book_slot(data: dict, db: Session = Depends(get_db), user=Depends(get_curren
         mentee_id=user.id,
         time=slot_text,
         date=date,
-        video_link=video_link
+        video_link=video_link,
+        slot_id=slot.id
     )
     db.add(booking)
     db.commit()
@@ -343,47 +344,36 @@ def get_mentor_bookings(db: Session = Depends(get_db), user=Depends(get_current_
         TimeSlot.is_booked == True
     ).all()
 
+    print(f"slots sre {slots}")
+
     results = []
 
     for slot in slots:
 
         # Find the matching booking for this date + slot time
-        booking = db.query(Booking).filter(
-            Booking.mentor_id == mentor_id,
-            Booking.date == slot.date
-        ).all()
+        bookingRow = db.query(Booking).filter(
+            Booking.slot_id == slot.id
+        ).first()
 
-        matched_booking = None
         video_link = None
         mentee_name = None
         mentee_email = None
 
-        for b in booking:
-            try:
-                start, end = normalize_time_range(b.time)
+        if bookingRow and bookingRow.mentee:
+            mentee_name = bookingRow.mentee.profile.user_name
+            mentee_email = bookingRow.mentee.email
 
-                if start == slot.start_time and end == slot.end_time:
-                    matched_booking = b
-                    video_link = b.video_link
-
-                    # mentee details
-                    if b.mentee:
-                        mentee_name = b.mentee.profile.user_name
-                        mentee_email = b.mentee.email
-                    break
-            except:
-                pass
-
+        
         results.append({
-            "booking_id": matched_booking.id if matched_booking else None,
-            "date": slot.date,
-            "start_time": slot.start_time,
-            "end_time": slot.end_time,
-            "slot": f"{slot.start_time} - {slot.end_time}",
-            "mentor_id": slot.mentor_id,
-            "video_link": video_link,
-            "mentee_name": mentee_name,
-            "mentee_email": mentee_email
+            "booking_id": bookingRow.id if bookingRow else None,
+            "date": bookingRow.slot.date if bookingRow else None,
+            "start_time": bookingRow.slot.start_time if bookingRow else None,
+            "end_time": bookingRow.slot.end_time if bookingRow else None,
+            "slot": f"{bookingRow.slot.start_time} - {bookingRow.slot.end_time}" if bookingRow else None,
+            "mentor_id": bookingRow.slot.mentor_id if bookingRow else None,
+            "video_link": bookingRow.video_link if bookingRow else None,
+            "mentee_name": bookingRow.mentee.name if bookingRow else None,
+            "mentee_email": bookingRow.mentee.email if bookingRow else None
         })
 
     return results

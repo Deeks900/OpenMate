@@ -13,9 +13,10 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;  /* remove horizontal scroll */
-  overflow-y: hidden;
-  height: 100%;
+  overflow-y: auto;
+  height: auto;
   width: 100%;
+  
 }
 
 /* Headings use Montserrat for premium branding */
@@ -61,4 +62,14 @@ html, body, * {
 }
 .material-icons {
   font-family: "Material Icons" !important;
+}
+
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    overflow: auto;
+    height: 100%;
 }

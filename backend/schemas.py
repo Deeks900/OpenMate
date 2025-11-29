@@ -59,6 +59,7 @@ class BookingResponse(BaseModel):
     mentee_id: int
     date: str
     time: str
+    slot_id: int
     booking_time: datetime
     video_link: str
 
