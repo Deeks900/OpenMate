@@ -198,22 +198,21 @@ toggleSlots(avail: any): void {
     this.router.navigate(['mentor/profile-edit']); 
   }
 
-
-signOut() {
-  this.auth.logout().subscribe({
-    next: () => {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user_role');
-      this.router.navigate(['/login']);
-    },
-    error: () => {
-      // Even if backend logout fails → clear local storage
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user_role');
-      this.router.navigate(['/login']);
-    }
-  });
-}
+  signOut() {
+    this.auth.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_role');
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        // Even if backend logout fails → clear local storage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_role');
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 
   
   loadProfile(): void { 

@@ -1,0 +1,30 @@
+--------Backend Code Structure-----------
+
+📌schemas.py ->This file will be defining schemas to do data type validation in Fast API Calls
+📌models.py->This file is defiining the Database Tables
+📌database.py->Containing code making connection to sqlite
+📌auth.py->Log in, access token and refresh token flow whoch is as follows : 
+🔐 Password Flow
+User registers with a plain password
+Password is hashed using bcrypt
+Only the hashed password is stored in the database
+Plain password is never stored or returned
+During login:
+User enters password
+Entered password is verified against stored hash
+If match → authentication succeeds
+
+🎟️ Access Token (Short)
+JWT issued after successful login
+Used to access protected APIs
+Sent in every request as Authorization: Bearer <token>
+Short-lived (minutes)
+Contains user identity (sub) and expiry (exp)
+
+🔁 Refresh Token (Short)
+JWT issued along with access token
+Used to get a new access token when it expires
+Long-lived (days)
+Not sent with every request
+Improves user experience by avoiding re-login
+

@@ -2,7 +2,7 @@
 <div class="animated-bg">
  <div class="logo-greeting">
     <h1 class="openmate-logo">OpenMate</h1>
-    <h2 class="greeting">{{ greetingMessage }}</h2>
+    <button mat-raised-button class="glass-btn logout-btn" (click)="signOut()">Logout</button>
 </div>
    <!-- PARTICLES -->
   <div class="particles">
@@ -58,6 +58,8 @@
       </div>
 
       <div class="right-section">
+
+        <h2 class="greeting">{{ greetingMessage }}</h2>
 
          <!-- SIDE QUOTE CARD -->
 <div class="quote-card glass-card">

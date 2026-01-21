@@ -34,8 +34,11 @@ export class Login {
   this.auth.login(payload).subscribe({
     next: (res: any) => {
       const role = res.role;
+      console.log('User role:', role);
       if (role === 'mentor') {
         this.router.navigate(['/mentor/profile-edit']);
+      } else if (role === 'mentee') {
+        this.router.navigate(['/mentee-home']);
       } else {
         this.router.navigate(['/dashboard']);
       }
