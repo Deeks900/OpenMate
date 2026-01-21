@@ -9,11 +9,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-mentee-home',
-  imports: [CommonModule, FormsModule, HttpClientModule, MatSnackBarModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, MatSnackBarModule, MatButtonModule],
   templateUrl: './mentee-home.html',
   styleUrl: './mentee-home.css',
 })
@@ -156,6 +157,21 @@ openLink(url: string) {
   this.noSlots = false;
   } 
 
+  signOut() {
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_role');
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        // Even if backend logout fails → clear local storage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_role');
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 
 
 confirmBooking(){
@@ -196,6 +212,7 @@ confirmBooking(){
   this.isBooking = false;
     }
   });
+
 
 }
 
